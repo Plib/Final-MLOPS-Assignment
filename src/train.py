@@ -1,87 +1,66 @@
 import pandas as pd
-import numpy as np
 import mlflow
+import mlflow.sklearn
 import pickle
 
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score, mean_squared_error
 
-DATA_PATH = "data/raw/medical-charges.csv"
+PROCESSED_DATA_PATH = "data/processed/processed.csv"
+MODEL_OUTPUT_PATH = "models/model.pkl"
 
 mlflow.set_tracking_uri("http://127.0.0.1:5555")
 
-# Load dataset
-df = pd.read_csv(DATA_PATH)
 
-print("Dataset Loaded Successfully")
-print(df.head())
+def train_model():
+    # Load processed dataset
+    df = pd.read_csv(PROCESSED_DATA_PATH)
 
+    # Features and target
+    X = df.drop("charges", axis=1)
+    y = df["charges"]
 
-# Preprocessing
-# Remove duplicates
-df = df.drop_duplicates()
+    print("\nFeature Columns:")
+    print(X.columns)
 
-# Encode categorical columns
-df["sex"] = df["sex"].map({"male": 0, "female": 1})
-df["smoker"] = df["smoker"].map({"no": 0, "yes": 1})
+    print("\nTarget Column:")
+    print(y.name)
 
-# One-hot encode region column
-df = pd.get_dummies(df, columns=["region"], drop_first=True)
+    # Train/Test Split
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42
+    )
 
-# Convert boolean columns to integers
-bool_columns = df.select_dtypes(include=["bool"]).columns
-df[bool_columns] = df[bool_columns].astype(int)
+    # Start MLflow run
+    with mlflow.start_run():
 
-# Features and Target
-X = df.drop("charges", axis=1)
-y = df["charges"]
+        # Train model
+        model = LinearRegression()
+        model.fit(X_train, y_train)
 
+        # Save model
+        with open(MODEL_OUTPUT_PATH, "wb") as file:
+            pickle.dump(model, file)
 
-# Display Information
-print("\nProcessed Dataset:")
-print(df.head())
+        # Log model to MLflow
+        result = mlflow.sklearn.log_model(
+            sk_model=model,
+            artifact_path="model"
+        )
 
-print("\nFeature Columns:")
-print(X.columns)
+        # Register model
+        mlflow.register_model(
+            model_uri=result.model_uri,
+            name="medical-charges-linear-regression"
+        )
 
-print("\nTarget Column:")
-print(y.name)
+        print(f"\nModel trained and saved to: {MODEL_OUTPUT_PATH}")
 
-
-# 80:20 Train/Test Split
-X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2,random_state=42)
-
-
-# Start MLflow Run
-with mlflow.start_run():
-  # Train Model
-  model = LinearRegression()
-  model.fit(X_train, y_train)
-
-  # Evaluate
-  predictions = model.predict(X_test)
-  r2 = r2_score(y_test, predictions)
-  mse = mean_squared_error(y_test, predictions)
-
-  # Log Metrics
-  mlflow.log_metric("r2_score", r2)
-  mlflow.log_metric("mse", mse)
-
-  # Log Model & Register
-  result = mlflow.sklearn.log_model(sk_model=model, artifact_path="model")
-    
-  mlflow.register_model(
-    model_uri=result.model_uri,
-    name="my-linear-regmodel"
-  )
-
-  print(f"Model logged with R2: {r2}")
+    return X_test, y_test
 
 
-# Save model to a .pkl file
-with open("model.pkl", "wb") as file:
-    pickle.dump(model, file)
-
-print("Model trained and saved as model.pkl!")
+if __name__ == "__main__":
+    train_model()
