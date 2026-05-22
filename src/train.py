@@ -2,6 +2,7 @@ import pandas as pd
 import mlflow
 import mlflow.sklearn
 import pickle
+import os
 
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -10,10 +11,8 @@ PROCESSED_DATA_PATH = "data/processed/processed.csv"
 MODEL_OUTPUT_PATH = "models/model.pkl"
 
 # For testing in Github Actions
-if os.getenv("CI"):
-    mlflow.set_tracking_uri("file:./mlruns")
-else:
-    mlflow.set_tracking_uri("http://127.0.0.1:5555")
+TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
+mlflow.set_tracking_uri(TRACKING_URI)
 
 
 def train_model():

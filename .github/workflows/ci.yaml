@@ -11,23 +11,26 @@ jobs:
   train-model:
     runs-on: ubuntu-latest
 
+    env:
+      MLFLOW_TRACKING_URI: file:./mlruns
+
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v4
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.10"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
 
-    - name: Install Dependencies
-      run: pip install -r requirements.txt
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
 
-    - name: Run Preprocessing
-      run: python src/data_preprocess.py
+      - name: Run Preprocessing
+        run: python src/data_preprocess.py
 
-    - name: Train Model
-      run: python src/train.py
+      - name: Train Model
+        run: python src/train.py
 
-    - name: Evaluate Model
-      run: python src/evaluate.py
+      - name: Evaluate Model
+        run: python src/evaluate.py
