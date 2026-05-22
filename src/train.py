@@ -8,11 +8,12 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
 
+DATA_PATH = "data/raw/medical-charges.csv"
 
 mlflow.set_tracking_uri("http://127.0.0.1:5555")
 
 # Load dataset
-df = pd.read_csv("medical-charges.csv")
+df = pd.read_csv(DATA_PATH)
 
 print("Dataset Loaded Successfully")
 print(df.head())
