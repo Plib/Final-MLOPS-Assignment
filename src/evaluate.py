@@ -1,6 +1,7 @@
 import pandas as pd
 import pickle
 import mlflow
+import os
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
@@ -8,10 +9,9 @@ from sklearn.metrics import r2_score, mean_squared_error
 PROCESSED_DATA_PATH = "data/processed/processed.csv"
 MODEL_PATH = "models/model.pkl"
 
-if os.getenv("CI"):
-    mlflow.set_tracking_uri("file:./mlruns")
-else:
-    mlflow.set_tracking_uri("http://127.0.0.1:5555")
+# For testing in Github Actions
+TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
+mlflow.set_tracking_uri(TRACKING_URI)
 
 
 def evaluate_model():
