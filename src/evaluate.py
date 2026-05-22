@@ -8,7 +8,10 @@ from sklearn.metrics import r2_score, mean_squared_error
 PROCESSED_DATA_PATH = "data/processed/processed.csv"
 MODEL_PATH = "models/model.pkl"
 
-mlflow.set_tracking_uri("http://127.0.0.1:5555")
+if os.getenv("CI"):
+    mlflow.set_tracking_uri("file:./mlruns")
+else:
+    mlflow.set_tracking_uri("http://127.0.0.1:5555")
 
 
 def evaluate_model():

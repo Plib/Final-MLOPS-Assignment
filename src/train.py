@@ -9,7 +9,11 @@ from sklearn.linear_model import LinearRegression
 PROCESSED_DATA_PATH = "data/processed/processed.csv"
 MODEL_OUTPUT_PATH = "models/model.pkl"
 
-mlflow.set_tracking_uri("http://127.0.0.1:5555")
+# For testing in Github Actions
+if os.getenv("CI"):
+    mlflow.set_tracking_uri("file:./mlruns")
+else:
+    mlflow.set_tracking_uri("http://127.0.0.1:5555")
 
 
 def train_model():
