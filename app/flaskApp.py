@@ -11,37 +11,25 @@ model = pickle.load(open("models/model.pkl", "rb"))
 
 @app.route("/")
 def welcome():
-    return "Medical Charges Prediction welcomes you!\n Please predict via the search bar for results."
+    return "Medical Charges Prediction welcomes you!\n Please predict via the search bar for results.\nFormat like /predict?age=30&sex=female&bmi=28&children=1&smoker=yes&region=southeast"
 
 
-@app.route("/predict", methods=["POST"])
+@app.route("/predict", methods=["GET"])
 def predict():
-    # Get form data
-    age = int(request.form["age"])
-    sex = 1 if request.form["sex"] == "female" else 0
-    bmi = float(request.form["bmi"])
-    children = int(request.form["children"])
-    smoker = 1 if request.form["smoker"] == "yes" else 0
-    region = request.form["region"]
 
-    # One-hot encode region
+    age = int(request.args.get("age"))
+    sex = 1 if request.args.get("sex") == "female" else 0
+    bmi = float(request.args.get("bmi"))
+    children = int(request.args.get("children"))
+    smoker = 1 if request.args.get("smoker") == "yes" else 0
+    region = request.args.get("region")
+
+    # ONE-HOT ENCODING (THIS WAS MISSING IN YOUR CODE)
     region_northwest = 1 if region == "northwest" else 0
     region_southeast = 1 if region == "southeast" else 0
     region_southwest = 1 if region == "southwest" else 0
-
-    # Match exact training feature order
-    feature_names = [
-        "age",
-        "sex",
-        "bmi",
-        "children",
-        "smoker",
-        "region_northwest",
-        "region_southeast",
-        "region_southwest"
-    ]
-
-    # Create dataframe for prediction
+    
+    # Build feature vector in EXACT training order
     features = pd.DataFrame([[
         age,
         sex,
@@ -51,15 +39,20 @@ def predict():
         region_northwest,
         region_southeast,
         region_southwest
-    ]], columns=feature_names)
+    ]], columns=[
+        "age",
+        "sex",
+        "bmi",
+        "children",
+        "smoker",
+        "region_northwest",
+        "region_southeast",
+        "region_southwest"
+    ])
 
-    # Predict charges
     prediction = model.predict(features)
 
-    # Format prediction
-    formatted_prediction = (f"Predicted Medical Charges: ${round(float(prediction[0]), 2)}")
-
-    return render_template("result.html", prediction=formatted_prediction)
+    return f"Predicted Charges: ${round(float(prediction[0]),2)}"
 
 
 if __name__ == "__main__":

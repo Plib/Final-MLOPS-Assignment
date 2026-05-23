@@ -1,11 +1,11 @@
 name: CI Pipeline
 
 on: workflow_dispatch  
-  #push:
-   # branches:
-    #  - main
-     # - dev
-      #- feature/**
+  push:
+    branches:
+      - main
+      - dev
+      - feature/**
 
 jobs:
   train-model:
