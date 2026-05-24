@@ -10,7 +10,7 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 PROCESSED_DATA_PATH = "data/processed/processed.csv"
 MODEL_OUTPUT_PATH = "models/model.pkl"
-MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
+MLFLOW_TRACKING_URI = os.environ["MLFLOW_TRACKING_URI"]
 
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
