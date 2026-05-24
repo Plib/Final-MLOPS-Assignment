@@ -1,6 +1,8 @@
 name: CI Pipeline
 
-on: workflow_dispatch  
+on:
+  workflow_dispatch:
+
   push:
     branches:
       - main
@@ -10,9 +12,6 @@ on: workflow_dispatch
 jobs:
   train-model:
     runs-on: ubuntu-latest
-
-    env:
-      MLFLOW_TRACKING_URI: file:./mlruns
 
     steps:
       - name: Checkout Repo
