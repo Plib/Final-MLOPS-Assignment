@@ -10,12 +10,8 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 PROCESSED_DATA_PATH = "data/processed/processed.csv"
 MODEL_OUTPUT_PATH = "models/model.pkl"
-MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
 
-if not MLFLOW_TRACKING_URI:
-    raise ValueError("MLFLOW_TRACKING_URI not set")
-
-mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+mlflow.set_tracking_uri("file:./mlruns")
 
 # Create experiment
 mlflow.set_experiment("medical-charges-regression")

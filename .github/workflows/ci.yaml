@@ -38,15 +38,6 @@ jobs:
           name: processed-data
           path: data/processed/
 
-      - name: Debug MLflow env
-        run: |
-          python -c "import os; print(os.getcwd())"
-          python -c "import mlflow; print(mlflow.get_tracking_uri())"
-
-      - name: Test MLflow API
-        run: |
-          curl -v ${{ secrets.MLFLOW_TRACKING_URI }}/api/2.0/mlflow/experiments/list
-
       - name: Train Model
         run: python src/train.py
 
