@@ -1,5 +1,4 @@
 name: CI Pipeline
-
 on:
   workflow_dispatch:
 
@@ -8,6 +7,9 @@ on:
       - main
       - dev
       - feature/**
+
+env:
+  MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
 
 jobs:
   train-model:
