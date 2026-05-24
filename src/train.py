@@ -2,7 +2,6 @@ import pandas as pd
 import mlflow
 import mlflow.sklearn
 import pickle
-import os
 
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -10,7 +9,7 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 PROCESSED_DATA_PATH = "data/processed/processed.csv"
 MODEL_OUTPUT_PATH = "models/model.pkl"
-MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://35.214.51.89:5555")
+MLFLOW_TRACKING_URI = "http://35.214.51.89:5555"
 
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
