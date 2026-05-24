@@ -8,13 +8,15 @@ on:
       - dev
       - feature/**
 
-env:
-  MLFLOW_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+
   
 jobs:
   train-model:
     runs-on: ubuntu-latest
 
+    env:
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+      
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -41,8 +43,9 @@ jobs:
           python -c "import os; print(os.getcwd())"
           python -c "import mlflow; print(mlflow.get_tracking_uri())"
 
-      - name: Check MLflow connection
-        run: curl -f ${{ secrets.MLFLOW_TRACKING_URI }}
+      - name: Test MLflow API
+        run: |
+          curl -v ${{ secrets.MLFLOW_TRACKING_URI }}/api/2.0/mlflow/experiments/list
 
       - name: Train Model
         run: python src/train.py

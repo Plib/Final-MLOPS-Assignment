@@ -5,14 +5,18 @@ on:
     - cron: "0 0 * * 0"   # every Sunday
   workflow_dispatch:
 
-env:
-  MLFLOW_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-
 jobs:
   train:
     runs-on: ubuntu-latest
 
+    env:
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+
     steps:
+      - name: Debug env
+        run: |
+          echo "MLFLOW_TRACKING_URI=$MLFLOW_TRACKING_URI"
+
       - name: Checkout repo
         uses: actions/checkout@v4
 
@@ -27,8 +31,9 @@ jobs:
       - name: Run preprocessing
         run: python src/data_preprocess.py
       
-      - name: Check MLflow connection
-        run: curl -f ${{ secrets.MLFLOW_TRACKING_URI }}
+      - name: Strong MLflow connectivity test
+        run: |
+          curl -v ${{ secrets.MLFLOW_TRACKING_URI }}/health
 
       - name: Train model
         run: python src/train.py
