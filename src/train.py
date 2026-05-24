@@ -11,6 +11,14 @@ from sklearn.metrics import r2_score, mean_squared_error
 PROCESSED_DATA_PATH = "data/processed/processed.csv"
 MODEL_OUTPUT_PATH = "models/model.pkl"
 
+'''
+Code commented out as had persistent issues with train.py failing due to not connecting to the remote containerised MLFlow
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
+if not MLFLOW_TRACKING_URI:
+    raise ValueError("MLFLOW_TRACKING_URI not set")
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+'''
+
 mlflow.set_tracking_uri("file:./mlruns")
 
 # Create experiment
@@ -72,3 +80,5 @@ with mlflow.start_run():
 print(f"\nModel trained and saved to: {MODEL_OUTPUT_PATH}")
 print(f"R2 Score: {r2}")
 print(f"MSE: {mse}")
+print("MLflow run completed")
+print("Check mlruns folder in artifacts")

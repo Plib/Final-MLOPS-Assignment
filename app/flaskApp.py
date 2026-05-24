@@ -9,9 +9,13 @@ app = Flask(__name__)
 model = pickle.load(open("models/model.pkl", "rb"))
 
 
-@app.route("/")
+@app.route('/')
 def welcome():
-    return "Medical Charges Prediction welcomes you!\n Please predict via the search bar for results.\nFormat like /predict?age=30&sex=female&bmi=28&children=1&smoker=yes&region=southeast"
+    return (
+        "Medical Charges Prediction welcomes you!<br>"
+        "Please predict via the search bar for results.<br><br>"
+        "Format like: /predict?age=30&sex=female&bmi=28&children=1&smoker=yes&amp;region=southeast"
+    )
 
 
 @app.route("/predict", methods=["GET"])
