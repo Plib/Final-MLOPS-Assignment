@@ -5,6 +5,9 @@ on:
     - cron: "0 0 * * 0"   # every Sunday
   workflow_dispatch:
 
+env:
+  MLFLOW_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+
 jobs:
   train:
     runs-on: ubuntu-latest
@@ -23,6 +26,9 @@ jobs:
 
       - name: Run preprocessing
         run: python src/data_preprocess.py
+      
+      - name: Check MLflow connection
+        run: curl -f ${{ secrets.MLFLOW_TRACKING_URI }}
 
       - name: Train model
         run: python src/train.py

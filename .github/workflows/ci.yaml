@@ -9,7 +9,7 @@ on:
       - feature/**
 
 env:
-  MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+  MLFLOW_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
   
 jobs:
   train-model:
@@ -27,7 +27,6 @@ jobs:
       - name: Install Dependencies
         run: pip install -r requirements.txt
 
-
       - name: Run Preprocessing
         run: python src/data_preprocess.py
 
@@ -41,6 +40,9 @@ jobs:
         run: |
           python -c "import os; print(os.getcwd())"
           python -c "import mlflow; print(mlflow.get_tracking_uri())"
+
+      - name: Check MLflow connection
+        run: curl -f ${{ secrets.MLFLOW_TRACKING_URI }}
 
       - name: Train Model
         run: python src/train.py
